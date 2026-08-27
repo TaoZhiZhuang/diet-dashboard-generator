@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>饮食运动记录看板</title>
+<script src="vendor/chart.umd.min.js"></script>
+<script src="vendor/chartjs-plugin-annotation.min.js"></script>
+<style>
+:root{
+  --bg:#111214; --card:#1a1c1f; --card2:#222529; --line:#2e3136;
+  --text:#e8eaed; --muted:#9aa0a6; --dim:#6b7075;
+  --green:#4caf7d; --green2:#2e7d5b; --red:#e0564f; --amber:#e0a24f; --blue:#5b8def;
+  --bright-yellow:#d8c232; --purple:#b47def;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;padding:24px;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:22px;font-weight:600;letter-spacing:.5px}
+.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+.panel h2{font-size:15px;font-weight:600;margin-bottom:12px}
+.panel h2 span{font-weight:400;color:var(--muted);font-size:12px;margin-left:8px}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chartbox{background:var(--card2);border-radius:10px;padding:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:500;font-size:12px}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;margin-right:4px}
+.tag.ok{background:rgba(76,175,125,.15);color:var(--green)}
+.tag.low{background:rgba(224,162,79,.15);color:var(--amber)}
+.tag.hi{background:rgba(224,86,79,.15);color:var(--red)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:16px}
+.grid4{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:760px){.charts,.grid2,.grid3{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,1fr)}}
+.purple{color:#b47def}
+.note{color:var(--dim);font-size:12px;margin-top:10px}
+.meal{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.meal:last-child{border-bottom:none}
+.meal .n{color:var(--muted)}
+.meal .c{color:var(--dim);font-size:12px}
+.mealhead{display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;font-size:12px;color:var(--muted)}
+.mealhead:first-child{margin-top:0}
+.sumrow{display:flex;gap:24px;padding-top:10px;margin-top:8px;border-top:1px solid var(--line);font-size:13px}
+.sumrow b{font-size:18px}
+.big{font-size:26px;font-weight:600;margin-top:2px}
+.k{color:var(--muted);font-size:12px}
+.up{color:var(--green)} .down{color:var(--red)} .warn{color:var(--amber)}
+.bcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-align:center}
+.bcard .bk{color:var(--muted);font-size:12px;margin-bottom:6px}
+.bcard .bv{font-size:32px;font-weight:600;line-height:1.2}
+.bcard .bu{font-size:13px;color:var(--muted);margin-left:2px}
+.bcard .bt{font-size:12px;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:4px}
+.bt.good{color:var(--green)} .bt.bad{color:var(--red)} .bt.flat{color:var(--dim)}
+.feel-grid{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:12px}
+.feel-block{background:var(--card2);border-radius:10px;padding:12px 16px;min-width:200px;flex:1}
+.feel-block .feel-val{font-size:15px;font-weight:600;margin-top:4px;color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>饮食运动记录看板</h1>
+  <div class="sub">2026-08-20 至 2026-08-27 · 数据源 example/*.csv · 自动生成</div>
+
+  <div style="height:16px"></div>
+  <div class="panel" style="margin-bottom:16px">
+    <h2>今日饮食<span>8/27 · 3 餐</span></h2>
+    
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+      <div>
+        <div class="mealhead"><span>早餐（425 kcal）</span></div>
+<div class="meal"><span>燕麦粥 1碗(300g)、水煮蛋 1个(50g)、牛奶 200ml</span></div>
+<div class="mealhead"><span>午餐（444 kcal）</span></div>
+<div class="meal"><span>米饭 150g、白灼虾 200g、蒜蓉生菜 150g</span></div>
+<div class="mealhead"><span>晚餐（399 kcal）</span></div>
+<div class="meal"><span>米饭 120g、香菇滑鸡 200g</span></div>
+      </div>
+      <div>
+        <div class="sumrow" style="border-top:none;padding-top:0;margin-top:0">
+          <div><div class="k">总热量</div><b>1268 kcal</b></div>
+          <div><div class="k">膳食纤维</div><b>9.1g</b></div>
+        </div>
+        <table style="margin-top:8px">
+          <thead><tr><th></th><th>克数</th><th>供能</th><th>比例</th></tr></thead>
+          <tbody>
+            <tr><td>碳水</td><td>134.2g</td><td>537 kcal</td><td><span class="tag ok">42%</span></td></tr>
+<tr><td>蛋白质</td><td>99.1g</td><td>396 kcal</td><td><span class="tag ok">31%</span></td></tr>
+<tr><td>脂肪</td><td>37.1g</td><td>334 kcal</td><td><span class="tag ok">26%</span></td></tr>
+          </tbody>
+        </table>
+        <div class="note" style="margin-top:8px">目标：碳45-50 / 蛋白25-28 / 脂20-25 / 纤维25-30g · 这是示例数据，替换成你自己的记录即可</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid4">
+    <div class="bcard"><div class="bk">运动消耗</div><div><span class="bv">150</span><span class="bu">kcal</span></div><div class="bt flat">今天</div></div>
+    <div class="bcard"><div class="bk">体重</div><div><span class="bv">69</span><span class="bu">kg</span></div><div class="bt good">↓ 0.3 kg</div></div>
+    <div class="bcard"><div class="bk">体脂率</div><div><span class="bv">27.5</span></div><div class="bt good">↓ 0.2</div></div>
+    <div class="bcard"><div class="bk">BMI</div><div><span class="bv">23.9</span></div><div class="bt good">↓ 0.1</div></div>
+    <div class="bcard"><div class="bk">肌肉量</div><div><span class="bv">52.4</span><span class="bu">kg</span></div><div class="bt" style="color:var(--blue)">↓ 0.1 kg</div></div>
+    <div class="bcard"><div class="bk">基础代谢</div><div><span class="bv">1486</span><span class="bu">kcal</span></div><div class="bt" style="color:var(--blue)">↓ 2 kcal</div></div>
+  </div>
+
+  <div class="charts">
+    <div class="chartbox">
+      <h2 style="font-size:13px;font-weight:500;color:var(--muted)">每日热量 vs 目标区间（1500-1600）</h2>
+      <canvas id="calChart" height="220"></canvas>
+    </div>
+    <div class="chartbox">
+      <h2 style="font-size:13px;font-weight:500;color:var(--muted)">碳蛋脂供能比（%·按日）</h2>
+      <canvas id="ratioChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div style="height:16px"></div>
+  <div class="charts">
+    <div class="chartbox">
+      <h2 style="font-size:13px;font-weight:500;color:var(--muted)">每日蛋白质 vs 目标（110g）</h2>
+      <canvas id="proChart" height="220"></canvas>
+    </div>
+    <div class="chartbox">
+      <h2 style="font-size:13px;font-weight:500;color:var(--muted)">体重 / 体脂 / BMI 趋势</h2>
+      <canvas id="bodyChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div style="height:16px"></div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>每日明细<span>热量 / 碳 / 蛋白 / 脂</span></h2>
+      <table>
+        <thead><tr><th>日期</th><th>热量<br><span style="font-weight:400;color:var(--dim);font-size:11px">kcal</span></th><th>碳水<br><span style="font-weight:400;color:var(--dim);font-size:11px">g</span></th><th>蛋白<br><span style="font-weight:400;color:var(--dim);font-size:11px">g</span></th><th>脂肪<br><span style="font-weight:400;color:var(--dim);font-size:11px">g</span></th><th>供能比 C:P:F</th><th>达标</th></tr></thead>
+        <tbody>
+<tr><td>8/20</td><td>1004</td><td>118.6</td><td>82.5</td><td>21.8</td><td>47:33:20</td><td><span class="tag low">偏低</span></td></tr>
+<tr><td>8/21</td><td>1174</td><td>146</td><td>81</td><td>30.5</td><td>49:27:23</td><td><span class="tag low">偏低</span></td></tr>
+<tr><td>8/22</td><td>759</td><td>98</td><td>55</td><td>16.5</td><td>52:29:20</td><td><span class="tag low">未完†</span></td></tr>
+<tr><td>8/23</td><td>1389</td><td>167.6</td><td>92.5</td><td>40.3</td><td>48:26:26</td><td><span class="tag low">偏低</span></td></tr>
+<tr><td>8/24</td><td>1224</td><td>118</td><td>76</td><td>48.7</td><td>39:25:36</td><td><span class="tag low">偏低</span></td></tr>
+<tr><td>8/25</td><td>1094</td><td>132.6</td><td>78.5</td><td>28.3</td><td>48:29:23</td><td><span class="tag low">偏低</span></td></tr>
+<tr><td>8/26</td><td>1234</td><td>144</td><td>69</td><td>43.5</td><td>46:22:31</td><td><span class="tag low">偏低</span></td></tr>
+<tr><td>8/27</td><td>1268</td><td>134.2</td><td>99.1</td><td>37.1</td><td>42:31:26</td><td><span class="tag low">偏低</span></td></tr>
+        </tbody>
+      </table>
+      <div class="note">* 8/22 缺午餐；† 8/22 午餐外出没来得及记录；示例数据集：覆盖热量4色（超量/接近/偏低）+ 缺餐 + 加餐场景；10天明细滚动到 8/20-8/27。</div>
+    </div>
+    <div class="panel">
+      <h2>身体数据<span>体脂秤实测</span></h2>
+      <table>
+        <thead><tr><th>日期</th><th>体重<br><span style="font-weight:400;color:var(--dim);font-size:11px">kg</span></th><th>体脂率<br><span style="font-weight:400;color:var(--dim);font-size:11px">%</span></th><th>肌肉<br><span style="font-weight:400;color:var(--dim);font-size:11px">kg</span></th><th>代谢<br><span style="font-weight:400;color:var(--dim);font-size:11px">kcal</span></th></tr></thead>
+        <tbody>
+<tr><td>8/02</td><td>70.1</td><td>28.3</td><td>52.2</td><td>1480</td></tr>
+<tr><td>8/09</td><td>69.9</td><td>28.1</td><td>52.4</td><td>1485</td></tr>
+<tr><td>8/16</td><td>69.6</td><td>27.9</td><td>52.3</td><td>1482</td></tr>
+<tr><td>8/23</td><td>69.3</td><td>27.7</td><td>52.5</td><td>1488</td></tr>
+<tr><td>8/27</td><td>69.0</td><td>27.5</td><td>52.4</td><td>1486</td></tr>
+        </tbody>
+      </table>
+      <div class="note">8/02-8/27 近30天 5次实测；区间内体重 69.0-70.1kg、体脂 27.5-28.3%、基础代谢稳定 1480-1488。8/3、8/4、8/5、8/6、8/7、8/8、8/10、8/11、8/12、8/13、8/14、8/15、8/17、8/18、8/19、8/20、8/21、8/22、8/24、8/25、8/26 无称重记录。示例：体脂秤晨起空腹实测，时间以实际为准。（完整历史在 body_measurements.csv，看板只展示最近一个月）</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>运动记录<span>近14天 3 次 · 8/17-8/27 · 总时长 100 分钟 · 总消耗 770 kcal</span></h2>
+    <table>
+      <thead><tr><th>日期</th><th>类型</th><th>时长<br><span style="font-weight:400;color:var(--dim);font-size:11px">min</span></th><th>消耗<br><span style="font-weight:400;color:var(--dim);font-size:11px">kcal</span></th><th>备注</th></tr></thead>
+      <tbody>
+<tr><td>8/17</td><td>骑车</td><td>40</td><td>320</td><td>APP显示消耗 320 大卡</td></tr>
+<tr><td>8/24</td><td>慢跑</td><td>35</td><td>300</td><td>按 300 记</td></tr>
+<tr><td>8/27</td><td>快走</td><td>25</td><td>150</td><td>手环显示消耗 150 大卡</td></tr>
+      </tbody>
+    </table>
+    <div class="note">示例：手环/APP 记录；备注里写"X大卡"或"按X记"会被自动解析，没写则按时长×10 估算。（完整历史在 workout_log.csv）</div>
+  </div>
+
+      <div class="panel">
+      <h2>感受记录<span>近14天 · 饿感 / 运动体感 / 次日恢复</span></h2>
+      <div class="feel-grid">
+        <div class="feel-block"><div class="k">饿感频次</div><div class="feel-val">饿 1 · 有点饿 3</div><div class="note">近14天有饿感 4/14 天</div></div><div class="feel-block"><div class="k">运动体感（即时）</div><div class="feel-val">累 1 · 有点累 1 · 正常 3</div><div class="note">近14天运动 5 次 · 没提的按正常计</div></div><div class="feel-block"><div class="k">次日恢复</div><div class="feel-val">正常 2 · 好 1 · 一般 1 · 差 1</div><div class="note">近14天运动 5 次 · 次日没说的默认正常</div></div>
+      </div>
+      <table>
+        <thead><tr><th>日期</th><th>时间</th><th>类型</th><th>强度</th><th>原话</th></tr></thead>
+        <tbody>
+        <tr><td>8/27</td><td>12:00</td><td>情绪</td><td>一般</td><td>上午工作状态一般，有点烦，午饭后好转</td></tr>
+<tr><td>8/26</td><td>16:30</td><td>饿</td><td>有点饿</td><td>下午又开始嘴馋想吃东西，不是饿，忍住了</td></tr>
+<tr><td>8/26</td><td>08:20</td><td>运动恢复</td><td>差</td><td>昨晚运动完睡晚了，今天起不来，浑身没劲</td></tr>
+<tr><td>8/25</td><td>21:30</td><td>运动感受</td><td>累</td><td>骑行后挺累的，腿发软，休息了半小时</td></tr>
+<tr><td>8/23</td><td>15:40</td><td>饿</td><td>有点饿</td><td>下午嘴空，想吃甜的，喝杯水压下去了</td></tr>
+<tr><td>8/22</td><td>09:00</td><td>运动恢复</td><td>一般</td><td>次日起来大腿微酸，精神还行</td></tr>
+<tr><td>8/21</td><td>19:30</td><td>运动感受</td><td>有点累</td><td>骑车40分钟后有点疲惫，但能正常做家务</td></tr>
+<tr><td>8/20</td><td>16:05</td><td>饿</td><td>饿</td><td>晚饭前明显饿，肚子咕咕叫，得先垫点东西</td></tr>
+        </tbody>
+      </table>
+      <div class="note">感受类攒批落盘（feeling_log.csv 结构化档位 + feeling_notes.csv 详细原话），按近14天统计。</div>
+    </div>
+
+  <div class="note" style="text-align:center;padding-bottom:10px">数据实时来自 example/diet_log.csv · workout_log.csv · body_measurements.csv · 看板备注.md</div>
+</div>
+
+<script>
+const C = {green:'#4caf7d', red:'#e0564f', amber:'#e0a24f', blue:'#5b8def', gray:'#3a3d42', text:'#9aa0a6'};
+Chart.defaults.color = C.text;
+Chart.defaults.borderColor = '#2e3136';
+
+const days = ["8/20", "8/21", "8/22", "8/23", "8/24", "8/25", "8/26", "8/27"];
+
+new Chart(document.getElementById('calChart'), {
+  type:'bar',
+  data:{labels:days, datasets:[{
+    label:'热量 kcal', data:[1004, 1174, 759, 1389, 1224, 1094, 1234, 1268], backgroundColor:["#e0a24f", "#e0a24f", "#e0564f", "#e0a24f", "#e0a24f", "#e0a24f", "#e0a24f", "#e0a24f"],
+    borderRadius:6, barThickness:26
+  }]},
+  options:{plugins:{legend:{display:false},
+    tooltip:{callbacks:{label:(c)=>' '+c.parsed.y+' kcal'}},
+    annotation:{annotations:{
+      targetBox:{type:'box', yMin:1500, yMax:1600, backgroundColor:'rgba(76,175,125,0.10)', borderColor:'rgba(76,175,125,0.45)', borderWidth:1, drawTime:'beforeDatasetsDraw'}
+    }}},
+    scales:{y:{beginAtZero:true, grid:{color:'#23262a'}}}}
+});
+
+new Chart(document.getElementById('proChart'), {
+  type:'line',
+  data:{labels:days, datasets:[{
+    label:'蛋白 g', data:[82.5, 81.0, 55.0, 92.5, 76.0, 78.5, 69.0, 99.1],
+    borderColor:C.green, backgroundColor:'rgba(76,175,125,.12)', fill:true, tension:.3,
+    pointRadius:4, pointBackgroundColor:C.green
+  }]},
+  options:{plugins:{legend:{display:false},
+    tooltip:{callbacks:{label:(c)=>' '+c.parsed.y+' g'}}},
+    scales:{y:{beginAtZero:true, grid:{color:'#23262a'}}}}
+});
+
+new Chart(document.getElementById('ratioChart'), {
+  type:'bar',
+  data:{labels:days, datasets:[
+    {label:'碳水 %', data:[47, 49, 52, 48, 39, 48, 46, 42], backgroundColor:'#5b8def', stack:'s', barThickness:26},
+    {label:'蛋白 %', data:[33, 27, 29, 26, 25, 29, 22, 31], backgroundColor:'#4caf7d', stack:'s', barThickness:26},
+    {label:'脂肪 %', data:[20, 23, 20, 26, 36, 23, 31, 26], backgroundColor:'#e0a24f', stack:'s', barThickness:26}
+  ]},
+  options:{scales:{x:{stacked:true}, y:{stacked:true, beginAtZero:true, max:100, grid:{color:'#23262a'}}},
+    plugins:{legend:{position:'bottom', labels:{boxWidth:12}}}}
+});
+
+new Chart(document.getElementById('bodyChart'), {
+  type:'line',
+  data:{labels:["8/02", "8/09", "8/16", "8/23", "8/27"], datasets:[
+    {label:'体重 kg', data:[70.1, 69.9, 69.6, 69.3, 69.0], borderColor:C.green, yAxisID:'y', tension:.3, pointRadius:4},
+    {label:'体脂率 %', data:[28.3, 28.1, 27.9, 27.7, 27.5], borderColor:C.amber, yAxisID:'y1', tension:.3, pointRadius:4, borderDash:[5,4]},
+    {label:'BMI', data:[24.3, 24.2, 24.1, 24.0, 23.9], borderColor:C.blue, yAxisID:'y2', tension:.3, pointRadius:4, borderDash:[2,3]}
+  ]},
+  options:{plugins:{legend:{position:'bottom', labels:{boxWidth:12}}},
+    scales:{
+      y:{position:'left', grid:{color:'#23262a'}, min:68.8, max:70.3},
+      y1:{position:'right', grid:{display:false}, min:27.4, max:28.4},
+      y2:{position:'right', grid:{display:false}, min:23.8, max:24.4}
+    }}
+});
+
+</script>
+</body>
+</html>
